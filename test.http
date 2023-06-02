@@ -1,0 +1,16 @@
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "username":"张三",
+    "password":"112266"
+}
+
+###
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "username":"张三",
+    "password":"1122667788"
+}

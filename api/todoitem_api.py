@@ -1,7 +1,7 @@
 from loguru import logger
 from sqlalchemy.orm import sessionmaker
 from flask_sqlalchemy import SQLAlchemy
-from flask import jsonify
+from flask import jsonify,request
 from flask import Blueprint
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy.orm import declarative_base
@@ -34,13 +34,23 @@ class Todoitem(Base):
 
 
 @todoitem_api.route('/id/<todoitemid>', methods=['GET'])
-def get_item(todoitemid: int):
+def get_item_by_id(todoitemid: int):
     item = db_session.query(Todoitem).filter_by(id=todoitemid).first()
     logger.info(f"access /user/{todoitemid}")
     if item:
         return jsonify(item.to_json())
     else:
         return jsonify({})
+
+@todoitem_api.route('/list', methods=['GET'])
+def get_items():
+    userid = request.args.get("user")
+    if not userid:
+        return jsonify({})
+    item_list = db_session.query(Todoitem).filter_by(user_id=userid)
+    item_out = [item.to_json() for item in item_list]
+    logger.info(f"query item by userid {userid}")
+    return jsonify(item_out)
 
 
 @todoitem_api.route('/all', methods=['GET'])

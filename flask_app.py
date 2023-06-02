@@ -6,7 +6,7 @@ from loguru import logger
 
 from flask_sqlalchemy import SQLAlchemy
 
-from api.user_api import get_user_api
+from api.user_api import get_user_api, verify_user
 from api.todoitem_api import get_todoitem_api
 
 app = Flask(__name__)
@@ -22,7 +22,6 @@ app.register_blueprint(todoitem_api)
 
 @app.route('/')
 def hello_world():
-    logger.info(request.headers["Head1"])
     return render_template('hello.html')
 
 
@@ -44,6 +43,20 @@ def get_json():
     data["age"] = int(data["age"]) + 1
     return jsonify(data)
 
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    user1 = verify_user(data["username"],data["password"])
+    if user1:
+        response = jsonify({
+            "message":"sccuess"
+        })
+        response.set_cookie(key="username",value=f"{user1.username}")
+        return response
+    else:
+        return jsonify({
+            "message":"fail"
+        })
 
 if __name__ == '__main__':
     app.run()

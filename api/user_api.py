@@ -39,6 +39,12 @@ def get_user(userid: int):
         return jsonify(user1.to_json())
     else:
         return jsonify({})
+    
+
+def verify_user(username, password) -> Sys_user:
+    logger.info("login")
+    user1 = db_session.query(Sys_user).filter_by(username=username,password=password).first()
+    return user1
 
 
 def get_user_api(app, db):
